@@ -82,10 +82,12 @@ class DocumentStore {
 								field.name());
 						String[] doc_terms = tfvector.getTerms();
 						int[] doc_freq = tfvector.getTermFrequencies();
+						System.out.print("    :");
 						for (int vec_idx = 0; vec_idx < tfvector.size(); vec_idx++) {
-							System.out.println(doc_terms[vec_idx] + ""
-									+ doc_freq[vec_idx]);
+							System.out.print(doc_terms[vec_idx] + ""
+									+ doc_freq[vec_idx] + ", ");
 						}
+						System.out.println();
 					}
 				}
 			}
