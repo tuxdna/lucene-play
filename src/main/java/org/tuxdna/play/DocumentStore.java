@@ -13,6 +13,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -48,11 +49,9 @@ class DocumentStore {
 			writer.addDocument(doc);
 			writer.commit();
 		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -62,8 +61,6 @@ class DocumentStore {
 	public Document read() {
 		if (reader == null)
 			return null;
-		// Directory dir;
-		// IndexSearcher searcher = new IndexSearcher(reader);
 
 		try {
 			TermEnum terms = reader.terms();
@@ -78,19 +75,24 @@ class DocumentStore {
 					continue;
 				System.out.println("id: " + i);
 				Document d = reader.document(i);
-				for(Fieldable field: d.getFields()) {
-					System.out.println("  "+field.name());
-					if(field.isTermVectorStored()) {
-						reader.getTermFreqVector(i, field.name());
+				for (Fieldable field : d.getFields()) {
+					System.out.println("  " + field.name());
+					if (field.isTermVectorStored()) {
+						TermFreqVector tfvector = reader.getTermFreqVector(i,
+								field.name());
+						String[] doc_terms = tfvector.getTerms();
+						int[] doc_freq = tfvector.getTermFrequencies();
+						for (int vec_idx = 0; vec_idx < tfvector.size(); vec_idx++) {
+							System.out.println(doc_terms[vec_idx] + ""
+									+ doc_freq[vec_idx]);
+						}
 					}
 				}
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return null;
 	}
 }
