@@ -63,28 +63,33 @@ class DocumentStore {
 			return null;
 
 		try {
+			
+			// enlist all the terms in corpus ( or the index )
 			TermEnum terms = reader.terms();
+			System.out.print("Corups Terms: ");
 			while (terms.next()) {
 				Term term = terms.term();
-				System.out.println(term.text());
+				System.out.print(term.text()+", ");
 			}
+			System.out.println();
 
+			// enlist terms per document
 			int num = reader.numDocs();
 			for (int i = 0; i < num; i++) {
 				if (reader.isDeleted(i))
 					continue;
-				System.out.println("id: " + i);
+				System.out.println("  Doc Id: " + i);
 				Document d = reader.document(i);
 				for (Fieldable field : d.getFields()) {
-					System.out.println("  " + field.name());
+					System.out.println("    " + field.name());
 					if (field.isTermVectorStored()) {
 						TermFreqVector tfvector = reader.getTermFreqVector(i,
 								field.name());
 						String[] doc_terms = tfvector.getTerms();
 						int[] doc_freq = tfvector.getTermFrequencies();
-						System.out.print("    :");
+						System.out.print("      ");
 						for (int vec_idx = 0; vec_idx < tfvector.size(); vec_idx++) {
-							System.out.print(doc_terms[vec_idx] + ""
+							System.out.print(doc_terms[vec_idx] + ":"
 									+ doc_freq[vec_idx] + ", ");
 						}
 						System.out.println();
