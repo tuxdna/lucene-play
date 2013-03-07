@@ -12,7 +12,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.store.Directory;
 
 public class Write implements Constants {
 	private static Logger logger = Logger.getLogger(Write.class);
@@ -34,12 +33,12 @@ public class Write implements Constants {
 		BasicConfigurator.configure();
 
 		Logger.getRootLogger();
-		String corpus_path = args.length >= 1 ? args[0] : null;
+		String corpusPath = args.length >= 1 ? args[0] : null;
 
 		String path = "/tmp/test-index";
 		DocumentStore store = new DocumentStore(path);
 
-		if (corpus_path == null) {
+		if (corpusPath == null) {
 			String text = "a b c d";
 
 			Document doc = new Document();
@@ -49,7 +48,7 @@ public class Write implements Constants {
 			storeIt(store, doc);
 		} else {
 
-			File file = new File(corpus_path);
+			File file = new File(corpusPath);
 			if (!file.isDirectory())
 				return;
 
