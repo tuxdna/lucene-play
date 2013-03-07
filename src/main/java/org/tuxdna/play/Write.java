@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -42,10 +44,26 @@ public class Write implements Constants {
 			String text = "a b c d";
 
 			Document doc = new Document();
+			
+			// store a normal text field analyzed
 			Field fieldAll = new Field(FIELD_ALL, text, Field.Store.YES,
 					Field.Index.ANALYZED, Field.TermVector.YES);
 			doc.add(fieldAll);
+			
+			// store an array of bytes
+			byte[] bArr = {0,2,3,4};
+			Field byteArrayField = new Field("byte_array", bArr, Field.Store.YES);
+			doc.add(byteArrayField);
+			
+			// store an array of integers
+			int[] iArr = {0,1,2,3,4};
+	        byte[] array = Utility.toByteArray(iArr);
+			
+			Field intArrayField = new Field("int_array", array, Field.Store.YES);
+			doc.add(intArrayField);
+			
 			storeIt(store, doc);
+
 		} else {
 
 			File file = new File(corpusPath);

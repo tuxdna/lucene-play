@@ -2,6 +2,8 @@ package org.tuxdna.play;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -63,13 +65,13 @@ class DocumentStore {
 			return null;
 
 		try {
-			
+
 			// enlist all the terms in corpus ( or the index )
 			TermEnum terms = reader.terms();
 			System.out.print("Corups Terms: ");
 			while (terms.next()) {
 				Term term = terms.term();
-				System.out.print(term.text()+", ");
+				System.out.print(term.text() + ", ");
 			}
 			System.out.println();
 
@@ -82,6 +84,14 @@ class DocumentStore {
 				Document d = reader.document(i);
 				for (Fieldable field : d.getFields()) {
 					System.out.println("    " + field.name());
+					if ("byte_array".equals(field.name())) {
+						byte[] bArr = field.getBinaryValue();
+						System.out.println(Utility.join(bArr, ", "));
+					} else if ("int_array".equals(field.name())) {
+						byte[] v = field.getBinaryValue();
+						int[] iArr = Utility.toIntArray(v);
+						System.out.println(Utility.join(iArr, ", "));
+					}
 					if (field.isTermVectorStored()) {
 						TermFreqVector tfvector = reader.getTermFreqVector(i,
 								field.name());
