@@ -2,13 +2,12 @@ package org.tuxdna.play;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
@@ -60,6 +59,24 @@ class DocumentStore {
 		return true;
 	}
 
+	public boolean update(Document doc) {
+		try {
+			Field field = doc.getField(Constants.FIELD_ID);
+			String txt = doc.get(field.name());
+			Term t = new Term(field.name(), txt);
+			writer.updateDocument(t, doc);
+			writer.commit();
+		} catch (CorruptIndexException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	
 	public Document read() {
 		if (reader == null)
 			return null;
@@ -111,5 +128,31 @@ class DocumentStore {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void deleteAll() throws IOException {
+		writer.deleteAll();
+	}
+	
+	public int count() {
+		return writer.maxDoc();
+	}
+	
+	public void close() throws IOException {
+		reader.close();
+		writer.close();
+		dir.close();
+	}
+
+	public void optimize() {
+		try {
+			writer.optimize();
+		} catch (CorruptIndexException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
