@@ -1,9 +1,10 @@
 package org.tuxdna.play;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 public class Read {
-
+	private static Logger logger = Logger.getLogger(Read.class);
 	/**
 	 * @param args
 	 */
